@@ -20,23 +20,29 @@ function saveToDos() {
   localStorage.setItem(TODOS_LS, JSON.stringify(toDos));
 }
 
-function paintToDo(text) {
+function paintToDo(text, toDoId) {
   const li = document.createElement("li");
   const delBtn = document.createElement("button");
   const span = document.createElement("span");
-  const newId = Date.now();
 
   delBtn.innerHTML = "❌";
   delBtn.addEventListener("click", deleteToDo);
   span.innerText = text;
   li.appendChild(span);
   li.appendChild(delBtn);
-  li.id = newId;
+
+  if (toDoId === null) {
+    const newId = Date.now();
+    li.id = newId;
+  } else {
+    li.id = toDoId;
+  }
+
   toDoList.appendChild(li);
 
   const toDoObj = {
     text: text,
-    id: newId,
+    id: parseInt(li.id, 10),
   };
   toDos.push(toDoObj);
   saveToDos();
@@ -45,7 +51,7 @@ function paintToDo(text) {
 function handleSubmit(event) {
   event.preventDefault();
   const currentValue = toDoInput.value;
-  paintToDo(currentValue);
+  paintToDo(currentValue, null);
   toDoInput.value = "";
 }
 
@@ -55,7 +61,7 @@ function loadToDos() {
     const parsedToDos = JSON.parse(loadedToDos);
 
     parsedToDos.forEach(function (toDo) {
-      paintToDo(toDo.text);
+      paintToDo(toDo.text, toDo.id);
     });
   } else {
   }
